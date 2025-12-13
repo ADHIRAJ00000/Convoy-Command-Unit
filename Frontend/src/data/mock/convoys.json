@@ -1,0 +1,248 @@
+[
+  {
+    "id": "1",
+    "name": "ALPHA-HAWK-01",
+    "origin": {
+      "lat": 34.08,
+      "lng": 74.79,
+      "name": "Srinagar"
+    },
+    "destination": {
+      "lat": 34.16,
+      "lng": 77.58,
+      "name": "Leh"
+    },
+    "currentPosition": {
+      "lat": 34.08,
+      "lng": 74.79
+    },
+    "speedKmph": 45,
+    "priority": "ALPHA",
+    "vehicleCount": 25,
+    "unitType": "ARMY",
+    "status": "EN_ROUTE",
+    "lastUpdated": "2025-12-10T18:54:37.012Z",
+    "etaHours": 12,
+    "assignedRoute": {
+      "id": "route-1",
+      "name": "Srinagar-Leh Highway",
+      "polyline": [[74.79, 34.08], [75.46, 34.27], [75.63, 34.24], [77.58, 34.16]],
+      "etaHours": 12,
+      "distanceKm": 434,
+      "riskScore": 45,
+      "segments": [
+        {
+          "id": "seg-1-0",
+          "coordinates": [[74.79, 34.08], [75.46, 34.27]],
+          "terrain": "MOUNTAIN",
+          "difficulty": "HIGH",
+          "recommendedSpeedKmph": 35,
+          "riskLevel": 0.6,
+          "status": "CLEAR"
+        }
+      ],
+      "checkpoints": [
+        {
+          "id": "cp-1-1",
+          "name": "Pass (km 87)",
+          "position": {"lat": 34.12, "lng": 75.15},
+          "status": "PENDING",
+          "type": "INTERMEDIATE",
+          "distanceFromOrigin": 87,
+          "eta": "2025-12-10T20:48:37.013Z"
+        },
+        {
+          "id": "cp-1-2",
+          "name": "Ridge (km 174)",
+          "position": {"lat": 34.18, "lng": 75.85},
+          "status": "PENDING",
+          "type": "INTERMEDIATE",
+          "distanceFromOrigin": 174,
+          "eta": "2025-12-10T22:42:37.013Z"
+        },
+        {
+          "id": "cp-1-3",
+          "name": "Summit (km 261)",
+          "position": {"lat": 34.21, "lng": 76.42},
+          "status": "PENDING",
+          "type": "INTERMEDIATE",
+          "distanceFromOrigin": 261,
+          "eta": "2025-12-11T00:36:37.013Z"
+        },
+        {
+          "id": "cp-1-4",
+          "name": "Valley (km 348)",
+          "position": {"lat": 34.18, "lng": 77.00},
+          "status": "PENDING",
+          "type": "INTERMEDIATE",
+          "distanceFromOrigin": 348,
+          "eta": "2025-12-11T02:30:37.013Z"
+        },
+        {
+          "id": "cp-1-dest",
+          "name": "Leh",
+          "position": {"lat": 34.16, "lng": 77.58},
+          "status": "PENDING",
+          "type": "DESTINATION",
+          "distanceFromOrigin": 434,
+          "eta": "2025-12-11T06:54:37.013Z"
+        }
+      ]
+    }
+  },
+  {
+    "id": "2",
+    "name": "BRAVO-SUPPLY-12",
+    "origin": {
+      "lat": 27.31,
+      "lng": 88.6,
+      "name": "Gangtok"
+    },
+    "destination": {
+      "lat": 27.39,
+      "lng": 88.84,
+      "name": "Nathu La"
+    },
+    "currentPosition": {
+      "lat": 27.31,
+      "lng": 88.6
+    },
+    "speedKmph": 40,
+    "priority": "BRAVO",
+    "vehicleCount": 18,
+    "unitType": "SUPPLY",
+    "status": "EN_ROUTE",
+    "lastUpdated": "2025-12-10T18:54:37.013Z",
+    "etaHours": 3,
+    "assignedRoute": {
+      "id": "route-2",
+      "name": "Gangtok-Nathu La Route",
+      "polyline": [[88.6, 27.31], [88.72, 27.35], [88.84, 27.39]],
+      "etaHours": 3,
+      "distanceKm": 56,
+      "riskScore": 52,
+      "segments": [
+        {
+          "id": "seg-2-0",
+          "coordinates": [[88.6, 27.31], [88.84, 27.39]],
+          "terrain": "MOUNTAIN",
+          "difficulty": "HIGH",
+          "recommendedSpeedKmph": 30,
+          "riskLevel": 0.7,
+          "status": "CLEAR"
+        }
+      ],
+      "checkpoints": [
+        {
+          "id": "cp-2-1",
+          "name": "Pass (km 28)",
+          "position": {"lat": 27.35, "lng": 88.72},
+          "status": "PENDING",
+          "type": "INTERMEDIATE",
+          "distanceFromOrigin": 28,
+          "eta": "2025-12-10T20:26:37.013Z"
+        },
+        {
+          "id": "cp-2-dest",
+          "name": "Nathu La Border",
+          "position": {"lat": 27.39, "lng": 88.84},
+          "status": "PENDING",
+          "type": "DESTINATION",
+          "distanceFromOrigin": 56,
+          "eta": "2025-12-10T21:54:37.013Z"
+        }
+      ]
+    }
+  },
+  {
+    "id": "3",
+    "name": "CHARLIE-MED-08",
+    "origin": {
+      "lat": 26.19,
+      "lng": 91.75,
+      "name": "Tezpur"
+    },
+    "destination": {
+      "lat": 27.58,
+      "lng": 91.92,
+      "name": "Tawang"
+    },
+    "currentPosition": {
+      "lat": 26.19,
+      "lng": 91.75
+    },
+    "speedKmph": 50,
+    "priority": "CHARLIE",
+    "vehicleCount": 12,
+    "unitType": "MEDICAL",
+    "status": "PLANNED",
+    "lastUpdated": "2025-12-10T18:54:37.013Z",
+    "etaHours": 8,
+    "assignedRoute": {
+      "id": "route-3",
+      "name": "Tezpur-Tawang Highway",
+      "polyline": [[91.75, 26.19], [91.82, 26.89], [92.07, 27.35], [91.92, 27.58]],
+      "etaHours": 8,
+      "distanceKm": 350,
+      "riskScore": 28,
+      "segments": [
+        {
+          "id": "seg-3-0",
+          "coordinates": [[91.75, 26.19], [91.92, 27.58]],
+          "terrain": "MOUNTAIN",
+          "difficulty": "MEDIUM",
+          "recommendedSpeedKmph": 60,
+          "riskLevel": 0.3,
+          "status": "CLEAR"
+        }
+      ],
+      "checkpoints": [
+        {
+          "id": "cp-3-1",
+          "name": "Pass (km 70)",
+          "position": {"lat": 26.47, "lng": 91.78},
+          "status": "PENDING",
+          "type": "INTERMEDIATE",
+          "distanceFromOrigin": 70,
+          "eta": "2025-12-10T20:18:37.013Z"
+        },
+        {
+          "id": "cp-3-2",
+          "name": "Ridge (km 140)",
+          "position": {"lat": 26.75, "lng": 91.82},
+          "status": "PENDING",
+          "type": "INTERMEDIATE",
+          "distanceFromOrigin": 140,
+          "eta": "2025-12-10T21:42:37.013Z"
+        },
+        {
+          "id": "cp-3-3",
+          "name": "Summit (km 210)",
+          "position": {"lat": 27.03, "lng": 91.87},
+          "status": "PENDING",
+          "type": "INTERMEDIATE",
+          "distanceFromOrigin": 210,
+          "eta": "2025-12-10T23:06:37.013Z"
+        },
+        {
+          "id": "cp-3-4",
+          "name": "Valley (km 280)",
+          "position": {"lat": 27.31, "lng": 91.89},
+          "status": "PENDING",
+          "type": "INTERMEDIATE",
+          "distanceFromOrigin": 280,
+          "eta": "2025-12-11T00:30:37.013Z"
+        },
+        {
+          "id": "cp-3-dest",
+          "name": "Sela Pass / Tawang",
+          "position": {"lat": 27.58, "lng": 91.92},
+          "status": "PENDING",
+          "type": "DESTINATION",
+          "distanceFromOrigin": 350,
+          "eta": "2025-12-11T02:54:37.013Z"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,188 @@
+[
+  {
+    "id": "1",
+    "name": "ALPHA-HAWK-01",
+    "origin": {
+      "lat": 34.08,
+      "lng": 74.79,
+      "name": "Srinagar"
+    },
+    "destination": {
+      "lat": 34.16,
+      "lng": 77.58,
+      "name": "Leh"
+    },
+    "currentPosition": {
+      "lat": 34.08,
+      "lng": 74.79
+    },
+    "speedKmph": 45,
+    "priority": "ALPHA",
+    "vehicleCount": 25,
+    "unitType": "ARMY",
+    "status": "EN_ROUTE",
+    "lastUpdated": "2025-12-10T18:54:37.012Z",
+    "etaHours": 12,
+    "assignedRoute": {
+      "segments": [
+        {
+          "id": "seg-1-0",
+          "index": 0,
+          "start": {
+            "lat": 34.08,
+            "lng": 74.79
+          },
+          "end": {
+            "lat": 34.24,
+            "lng": 75.63
+          },
+          "terrain": "MOUNTAIN",
+          "recommendedSpeedKmph": 35,
+          "capacityVehicles": 30,
+          "elevation": 3528,
+          "conditions": "CLEAR",
+          "difficulty": "HIGH"
+        }
+      ],
+      "checkpoints": [
+        {
+          "id": "cp-1",
+          "name": "Zoji La Pass",
+          "location": {
+            "lat": 34.27,
+            "lng": 75.46
+          },
+          "status": "PENDING",
+          "eta": "2025-12-10T22:54:37.013Z"
+        }
+      ],
+      "totalDistanceKm": 434,
+      "estimatedHours": 12,
+      "riskScore": 45
+    }
+  },
+  {
+    "id": "2",
+    "name": "BRAVO-SUPPLY-12",
+    "origin": {
+      "lat": 27.31,
+      "lng": 88.6,
+      "name": "Gangtok"
+    },
+    "destination": {
+      "lat": 27.39,
+      "lng": 88.84,
+      "name": "Nathu La"
+    },
+    "currentPosition": {
+      "lat": 27.31,
+      "lng": 88.6
+    },
+    "speedKmph": 40,
+    "priority": "BRAVO",
+    "vehicleCount": 18,
+    "unitType": "LOGISTICS",
+    "status": "EN_ROUTE",
+    "lastUpdated": "2025-12-10T18:54:37.013Z",
+    "etaHours": 3,
+    "assignedRoute": {
+      "segments": [
+        {
+          "id": "seg-2-0",
+          "index": 0,
+          "start": {
+            "lat": 27.31,
+            "lng": 88.6
+          },
+          "end": {
+            "lat": 27.39,
+            "lng": 88.84
+          },
+          "terrain": "MOUNTAIN",
+          "recommendedSpeedKmph": 30,
+          "capacityVehicles": 25,
+          "elevation": 4310,
+          "conditions": "FOG",
+          "difficulty": "HIGH"
+        }
+      ],
+      "checkpoints": [
+        {
+          "id": "cp-2",
+          "name": "Nathu La Border",
+          "location": {
+            "lat": 27.39,
+            "lng": 88.84
+          },
+          "status": "PENDING",
+          "eta": "2025-12-10T21:54:37.013Z"
+        }
+      ],
+      "totalDistanceKm": 56,
+      "estimatedHours": 3,
+      "riskScore": 52
+    }
+  },
+  {
+    "id": "3",
+    "name": "CHARLIE-MED-08",
+    "origin": {
+      "lat": 26.19,
+      "lng": 91.75,
+      "name": "Tezpur"
+    },
+    "destination": {
+      "lat": 27.58,
+      "lng": 91.92,
+      "name": "Tawang"
+    },
+    "currentPosition": {
+      "lat": 26.19,
+      "lng": 91.75
+    },
+    "speedKmph": 50,
+    "priority": "CHARLIE",
+    "vehicleCount": 12,
+    "unitType": "MEDICAL",
+    "status": "PLANNED",
+    "lastUpdated": "2025-12-10T18:54:37.013Z",
+    "etaHours": 8,
+    "assignedRoute": {
+      "segments": [
+        {
+          "id": "seg-3-0",
+          "index": 0,
+          "start": {
+            "lat": 26.19,
+            "lng": 91.75
+          },
+          "end": {
+            "lat": 27.58,
+            "lng": 91.92
+          },
+          "terrain": "PLAIN",
+          "recommendedSpeedKmph": 60,
+          "capacityVehicles": 80,
+          "elevation": 150,
+          "conditions": "CLEAR",
+          "difficulty": "LOW"
+        }
+      ],
+      "checkpoints": [
+        {
+          "id": "cp-3",
+          "name": "Sela Pass",
+          "location": {
+            "lat": 27.35,
+            "lng": 92.07
+          },
+          "status": "PENDING",
+          "eta": "2025-12-11T00:54:37.013Z"
+        }
+      ],
+      "totalDistanceKm": 350,
+      "estimatedHours": 8,
+      "riskScore": 28
+    }
+  }
+]
