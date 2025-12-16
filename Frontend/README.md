@@ -71,3 +71,4 @@ src/
 1. Convoy + road data comes from a planning service; we seed it via `src/data/mock` for now.
 2. Optimizer, event bus, and checkpoint APIs are not yet available, so the route handlers act as placeholders with clear TODO comments.
 3. Realtime telemetry is approximated with polling to keep hackathon setup frictionless; swap the `createRealtimeBridge` helper for websockets when ready.
+# Final_Prototype_
