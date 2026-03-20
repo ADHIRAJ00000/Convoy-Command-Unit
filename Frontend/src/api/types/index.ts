@@ -65,7 +65,7 @@ export interface ConvoyDTO {
 
 export interface Convoy extends ConvoyDTO {
   id: string;
-  status: 'PLANNED' | 'EN_ROUTE' | 'DELAYED' | 'COMPLETED' | 'BLOCKED';
+  status: 'PLANNED1' | 'EN_ROUTE' | 'DELAYED' | 'COMPLETED' | 'BLOCKED';
   currentPosition?: Location;
   assignedRoute?: Route;
   etaHours?: number;
