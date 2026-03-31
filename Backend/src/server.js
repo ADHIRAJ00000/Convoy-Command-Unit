@@ -88,6 +88,10 @@ const HOST = process.env.HOST || '0.0.0.0';
 
 async function startServer() {
   try {
+    logger.info(`🔍 MONGODB_URI set: ${!!process.env.MONGODB_URI}`);
+    logger.info(`🔍 NODE_ENV: ${process.env.NODE_ENV}`);
+    logger.info(`🔍 PORT: ${PORT}`);
+
     // Connect to databases
     await connectDB();
     await connectRedis();
@@ -105,10 +109,17 @@ async function startServer() {
       logger.info(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
   } catch (error) {
-    logger.error('Failed to start server:', error);
+    logger.error('Failed to start server:', error.message);
+    logger.error('Full error:', JSON.stringify(error, null, 2));
     process.exit(1);
   }
 }
+
+// Handle port in use or other server errors
+server.on('error', (error) => {
+  logger.error('Server error:', error);
+  process.exit(1);
+});
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
