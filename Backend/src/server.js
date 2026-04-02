@@ -60,6 +60,23 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Root route - Welcome message
+app.get('/', (req, res) => {
+  res.json({
+    name: 'HawkRoute Backend API',
+    version: '1.0.0',
+    description: 'Real-Time AI Mobility Intelligence Platform for Military Convoy Operations',
+    endpoints: {
+      health: '/health',
+      api: '/api',
+      convoys: '/api/convoys',
+      events: '/api/events',
+      auth: '/api/auth'
+    },
+    documentation: 'https://github.com/ADHIRAJ00000/Convoy-Command-Unit'
+  });
+});
+
 // API Routes
 app.use('/api/convoys', convoyRoutes);
 app.use('/api/events', eventRoutes);
