@@ -1,0 +1,46 @@
+services:
+  # Backend Service
+  - type: web
+    name: hawkroute-backend
+    env: node
+    region: oregon
+    plan: starter
+    branch: main
+    rootDir: Backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRE
+        value: 7d
+      - key: CORS_ORIGINS
+        sync: false
+      - key: LOG_LEVEL
+        value: info
+      - key: OPTIMIZER_SERVICE_URL
+        value: https://hawkroute-optimizer.onrender.com
+      - key: CONVOY_UPDATE_INTERVAL
+        value: 5000
+      - key: POSITION_BROADCAST_INTERVAL
+        value: 3000
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: 100
+    healthCheckPath: /health
+    
+databases:
+  - name: hawkroute-mongodb
+    databaseName: hawkroute
+    user: hawkroute_user
+    # Note: You'll need to create MongoDB Atlas separately and add the connection string
+    # Or use Render's managed MongoDB if available in your region
