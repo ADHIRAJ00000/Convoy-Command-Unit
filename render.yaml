@@ -8,7 +8,6 @@ services:
     branch: main
     rootDir: Backend
     buildCommand: npm install
-    startCommand: node src/server.js
     envVars:
       - key: NODE_ENV
         value: production
