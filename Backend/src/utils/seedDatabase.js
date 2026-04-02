@@ -9,11 +9,8 @@ const seedConvoysData = require('../data/seed-convoys.json');
 
 async function seedDatabase() {
   try {
-    // Connect to database
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    // Connect to database (no deprecated options needed for MongoDB 4.0+)
+    await mongoose.connect(process.env.MONGODB_URI);
     
     logger.info('Connected to MongoDB for seeding');
     
@@ -27,9 +24,11 @@ async function seedDatabase() {
     const convoys = await Convoy.insertMany(seedConvoysData);
     logger.info(`✅ Seeded ${convoys.length} convoys`);
     
-    // Create default users
+    // Create default users with required fields
     const defaultUsers = [
       {
+        name: 'Admin User',
+        email: 'admin@hawkroute.mil',
         username: 'admin',
         password: 'admin123',
         rank: 'Lt. General',
@@ -38,14 +37,18 @@ async function seedDatabase() {
         permissions: ['READ_CONVOYS', 'WRITE_CONVOYS', 'OPTIMIZE_ROUTES', 'MANAGE_EVENTS', 'ADMIN']
       },
       {
+        name: 'Commander User',
+        email: 'commander@hawkroute.mil',
         username: 'commander',
         password: 'commander123',
         rank: 'Major',
         unit: '15 Corps',
-        role: 'COMMANDER',
+        role: 'ADMIN',
         permissions: ['READ_CONVOYS', 'WRITE_CONVOYS', 'OPTIMIZE_ROUTES', 'MANAGE_EVENTS']
       },
       {
+        name: 'Operator User',
+        email: 'operator@hawkroute.mil',
         username: 'operator',
         password: 'operator123',
         rank: 'Captain',
@@ -54,11 +57,13 @@ async function seedDatabase() {
         permissions: ['READ_CONVOYS', 'WRITE_CONVOYS', 'MANAGE_EVENTS']
       },
       {
+        name: 'Viewer User',
+        email: 'viewer@hawkroute.mil',
         username: 'viewer',
         password: 'viewer123',
         rank: 'Lieutenant',
         unit: 'Monitoring Team',
-        role: 'VIEWER',
+        role: 'OPERATOR',
         permissions: ['READ_CONVOYS']
       }
     ];
