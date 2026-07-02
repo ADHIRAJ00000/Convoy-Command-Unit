@@ -1,12 +1,13 @@
 'use client';
 
 import useSWR from 'swr';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import MapContainer from '@/components/Map/MapContainer';
 import { api } from '@/lib/api';
 import CheckpointButton from '@/components/Mobile/CheckpointButton';
 import type { Convoy } from '@/types/convoy';
 
-const MobilePage = () => {
+const MobilePageContent = () => {
   const { data: convoys = [] } = useSWR<Convoy[]>('/api/convoys', api.getConvoys);
   const convoy = convoys[0];
   const pendingCheckpoint = convoy?.assignedRoute?.checkpoints.find((checkpoint) => checkpoint.status === 'PENDING') ??
@@ -64,5 +65,11 @@ const MobilePage = () => {
     </div>
   );
 };
+
+const MobilePage = () => (
+  <ProtectedRoute>
+    <MobilePageContent />
+  </ProtectedRoute>
+);
 
 export default MobilePage;

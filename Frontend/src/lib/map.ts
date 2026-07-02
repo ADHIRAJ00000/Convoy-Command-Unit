@@ -10,6 +10,7 @@ const priorityColors: Record<Priority, string> = {
   ALPHA: '#f59e0b',
   BRAVO: '#34d399',
   CHARLIE: '#60a5fa',
+  DELTA: '#a78bfa',
 };
 
 export const getPriorityColor = (priority: Priority) => priorityColors[priority];

@@ -3,8 +3,8 @@ export type RouteSegmentStatus = 'CLEAR' | 'HIGH_RISK' | 'BLOCKED';
 export type RouteSegment = {
   id: string;
   coordinates: [number, number][]; // [lng, lat]
-  terrain: 'URBAN' | 'MOUNTAIN' | 'DESERT' | 'FOREST' | 'COASTAL';
-  difficulty: 'LOW' | 'MEDIUM' | 'HIGH';
+  terrain: 'URBAN' | 'MOUNTAIN' | 'DESERT' | 'FOREST' | 'COASTAL' | 'PLAIN';
+  difficulty: 'LOW' | 'MEDIUM' | 'HIGH' | 'EXTREME';
   recommendedSpeedKmph: number;
   riskLevel: number; // 0-1 scale
   status: RouteSegmentStatus;

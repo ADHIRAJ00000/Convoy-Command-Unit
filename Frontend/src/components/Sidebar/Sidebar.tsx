@@ -5,8 +5,8 @@ import type { Convoy, Priority, ConvoyStatus } from '@/types/convoy';
 import { ConvoyList } from '@/components/ConvoyList';
 import clsx from 'clsx';
 
-const priorityOptions: Priority[] = ['ALPHA', 'BRAVO', 'CHARLIE'];
-const statusOptions: ConvoyStatus[] = ['PLANNED', 'EN_ROUTE', 'DELAYED', 'COMPLETED'];
+const priorityOptions: Priority[] = ['ALPHA', 'BRAVO', 'CHARLIE', 'DELTA'];
+const statusOptions: ConvoyStatus[] = ['PLANNED', 'EN_ROUTE', 'AT_CHECKPOINT', 'DELAYED', 'COMPLETED', 'CANCELLED'];
 
 export type SidebarProps = {
   convoys: Convoy[];

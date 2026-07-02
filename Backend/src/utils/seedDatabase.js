@@ -11,23 +11,23 @@ async function seedDatabase() {
   try {
     // Connect to database (no deprecated options needed for MongoDB 4.0+)
     await mongoose.connect(process.env.MONGODB_URI);
-    
+
     logger.info('Connected to MongoDB for seeding');
-    
+
     // Clear existing data
     await Convoy.deleteMany({});
     await User.deleteMany({});
-    
+
     logger.info('Cleared existing data');
-    
+
     // Insert convoys
     const convoys = await Convoy.insertMany(seedConvoysData);
     logger.info(`✅ Seeded ${convoys.length} convoys`);
-    
+
     // Create default users with required fields
     const defaultUsers = [
       {
-        name: 'Admin User',
+        name: 'System Administrator',
         email: 'admin@hawkroute.mil',
         username: 'admin',
         password: 'admin123',
@@ -37,51 +37,40 @@ async function seedDatabase() {
         permissions: ['READ_CONVOYS', 'WRITE_CONVOYS', 'OPTIMIZE_ROUTES', 'MANAGE_EVENTS', 'ADMIN']
       },
       {
-        name: 'Commander User',
-        email: 'commander@hawkroute.mil',
-        username: 'commander',
-        password: 'commander123',
-        rank: 'Major',
-        unit: '15 Corps',
-        role: 'ADMIN',
-        permissions: ['READ_CONVOYS', 'WRITE_CONVOYS', 'OPTIMIZE_ROUTES', 'MANAGE_EVENTS']
-      },
-      {
-        name: 'Operator User',
+        name: 'Field Operator',
         email: 'operator@hawkroute.mil',
         username: 'operator',
         password: 'operator123',
         rank: 'Captain',
         unit: 'Operations Center',
         role: 'OPERATOR',
-        permissions: ['READ_CONVOYS', 'WRITE_CONVOYS', 'MANAGE_EVENTS']
+        permissions: ['READ_CONVOYS', 'WRITE_CONVOYS', 'OPTIMIZE_ROUTES']
       },
       {
-        name: 'Viewer User',
-        email: 'viewer@hawkroute.mil',
-        username: 'viewer',
-        password: 'viewer123',
+        name: 'Field Officer',
+        email: 'fieldofficer@hawkroute.mil',
+        username: 'fieldofficer',
+        password: 'fieldofficer123',
         rank: 'Lieutenant',
         unit: 'Monitoring Team',
-        role: 'OPERATOR',
-        permissions: ['READ_CONVOYS']
+        role: 'FIELD_OFFICER',
+        permissions: ['READ_CONVOYS', 'MANAGE_EVENTS']
       }
     ];
-    
+
     for (const userData of defaultUsers) {
       const user = new User(userData);
       await user.save();
     }
-    
+
     logger.info(`✅ Seeded ${defaultUsers.length} users`);
-    
+
     logger.info('🎉 Database seeding completed successfully');
     logger.info('\n📋 Default Users:');
     logger.info('   Admin: admin / admin123');
-    logger.info('   Commander: commander / commander123');
     logger.info('   Operator: operator / operator123');
-    logger.info('   Viewer: viewer / viewer123');
-    
+    logger.info('   Field Officer: fieldofficer / fieldofficer123');
+
     process.exit(0);
   } catch (error) {
     logger.error('Seeding failed:', error);

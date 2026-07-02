@@ -7,7 +7,7 @@ export type Toast = {
   id: string;
   title: string;
   description?: string;
-  tone?: 'success' | 'warning' | 'info';
+  tone?: 'success' | 'warning' | 'info' | 'error';
   actionLabel?: string;
   onAction?: () => void;
 };
@@ -16,6 +16,7 @@ const toneClasses: Record<NonNullable<Toast['tone']>, string> = {
   success: 'border-emerald-400 text-emerald-200',
   warning: 'border-amberCommand text-amberCommand',
   info: 'border-sky-400 text-sky-200',
+  error: 'border-red-500 text-red-300',
 };
 
 export type NotificationToastProps = {

@@ -1,4 +1,4 @@
-﻿// API Type Definitions for HawkRoute
+// API Type Definitions for HawkRoute
 // Generated: 2025-12-12
 
 // ============================================
@@ -14,7 +14,7 @@ export interface RegisterDTO {
   name: string;
   email: string;
   password: string;
-  role?: 'COMMANDER' | 'OPERATOR' | 'VIEWER';
+  role?: 'ADMIN' | 'OPERATOR' | 'FIELD_OFFICER';
 }
 
 export interface AuthResponse {
@@ -31,7 +31,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'COMMANDER' | 'OPERATOR' | 'VIEWER';
+  role: 'ADMIN' | 'OPERATOR' | 'FIELD_OFFICER';
   createdAt: string;
   updatedAt: string;
 }
@@ -60,12 +60,12 @@ export interface ConvoyDTO {
   priority: 'ALPHA' | 'BRAVO' | 'CHARLIE' | 'DELTA';
   vehicleCount: number;
   speedKmph: number;
-  unitType?: 'ARMY' | 'SUPPLY' | 'MEDICAL' | 'FUEL';
+  unitType?: 'ARMY' | 'AIRFORCE' | 'NAVY' | 'PARAMILITARY' | 'LOGISTICS' | 'MEDICAL';
 }
 
 export interface Convoy extends ConvoyDTO {
   id: string;
-  status: 'PLANNED1' | 'EN_ROUTE' | 'DELAYED' | 'COMPLETED' | 'BLOCKED';
+  status: 'PLANNED' | 'EN_ROUTE' | 'AT_CHECKPOINT' | 'DELAYED' | 'COMPLETED' | 'CANCELLED';
   currentPosition?: Location;
   assignedRoute?: Route;
   etaHours?: number;
@@ -87,8 +87,8 @@ export interface Route {
 export interface RouteSegment {
   id: string;
   coordinates: [number, number][];
-  terrain: 'URBAN' | 'MOUNTAIN' | 'DESERT' | 'FOREST' | 'COASTAL';
-  difficulty: 'LOW' | 'MEDIUM' | 'HIGH';
+  terrain: 'URBAN' | 'MOUNTAIN' | 'DESERT' | 'FOREST' | 'COASTAL' | 'PLAIN';
+  difficulty: 'LOW' | 'MEDIUM' | 'HIGH' | 'EXTREME';
   recommendedSpeedKmph: number;
   riskLevel: number;
   status: 'CLEAR' | 'HIGH_RISK' | 'BLOCKED';

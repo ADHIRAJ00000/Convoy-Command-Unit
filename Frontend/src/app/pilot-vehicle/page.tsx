@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { usePilotVehicleStore } from '@/store/pilotVehicleStore';
 import { pilotVehicleService } from '@/api/services/pilotVehicleService';
 import { simulatePositionUpdate } from '@/data/mock/pilotVehicleMockData';
@@ -21,7 +22,7 @@ import { fetchMapboxRoute, generateCheckpointsFromRoute as generateMapboxCheckpo
 import { api } from '@/lib/api';
 import type { Convoy } from '@/types/convoy';
 
-export default function PilotVehiclePage() {
+function PilotVehiclePageContent() {
   const pathname = usePathname();
   const {
     selectedConvoyId,
@@ -260,18 +261,25 @@ export default function PilotVehiclePage() {
     }
   };
 
-  // Simulation loop
+  // Simulation loop. Reads the latest data straight from the store instead of
+  // depending on `pilotVehicleData` in the effect deps - otherwise the interval
+  // gets torn down and rebuilt on every single tick (since setPilotVehicleData
+  // changes that same value), which was causing the position/camera to jump
+  // around erratically instead of advancing smoothly.
   useEffect(() => {
-    if (!simulation.isPlaying || !pilotVehicleData) return;
+    if (!simulation.isPlaying) return;
 
     const interval = setInterval(() => {
-      const updatedData = simulatePositionUpdate(pilotVehicleData, simulation.speed);
+      const latest = usePilotVehicleStore.getState().pilotVehicleData;
+      if (!latest) return;
+
+      const updatedData = simulatePositionUpdate(latest, simulation.speed);
       setPilotVehicleData(updatedData);
       updatePosition(updatedData.currentPosition);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [simulation.isPlaying, simulation.speed, pilotVehicleData]);
+  }, [simulation.isPlaying, simulation.speed]);
 
   // Show alert modal when new unacknowledged alert arrives
   useEffect(() => {
@@ -504,5 +512,13 @@ export default function PilotVehiclePage() {
       {/* Notification Toasts */}
       <NotificationToast toasts={toasts} onDismiss={dismissToast} />
     </div>
+  );
+}
+
+export default function PilotVehiclePage() {
+  return (
+    <ProtectedRoute>
+      <PilotVehiclePageContent />
+    </ProtectedRoute>
   );
 }

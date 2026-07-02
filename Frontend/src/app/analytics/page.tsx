@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import AnalyticsPanel from '@/components/AnalyticsPanel';
 import { api } from '@/lib/api';
 import type { Convoy } from '@/types/convoy';
@@ -26,7 +27,7 @@ const getSegmentBadge = (segment: RouteSegment) => {
   return 'bg-emerald-400/10 text-emerald-200 border-emerald-400/40';
 };
 
-const AnalyticsPage = () => {
+const AnalyticsPageContent = () => {
   const pathname = usePathname();
   const { data: convoys = [] } = useSWR<Convoy[]>('/api/convoys', fetchConvoys, { refreshInterval: 20000 });
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
@@ -287,5 +288,11 @@ const AnalyticsPage = () => {
     </div>
   );
 };
+
+const AnalyticsPage = () => (
+  <ProtectedRoute>
+    <AnalyticsPageContent />
+  </ProtectedRoute>
+);
 
 export default AnalyticsPage;

@@ -50,7 +50,7 @@ client.interceptors.request.use(
     
     // Inject access token into Authorization header
     if (token && !config._retry) {
-      config.headers.Authorization = `Bearer `;
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     // Add API key if configured
@@ -86,7 +86,7 @@ client.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            originalRequest.headers.Authorization = `Bearer `;
+            originalRequest.headers.Authorization = `Bearer ${token}`;
             return client(originalRequest);
           })
           .catch((err) => {
@@ -110,7 +110,7 @@ client.interceptors.response.use(
       try {
         // Attempt to refresh the token
         const response = await axios.post(
-          `/auth/refresh-token`,
+          `${getBaseURL()}/api/auth/refresh-token`,
           { refreshToken },
           {
             headers: {
@@ -121,9 +121,9 @@ client.interceptors.response.use(
 
         const { accessToken } = response.data.data;
         setAccessToken(accessToken);
-        
+
         // Update the original request with new token
-        originalRequest.headers.Authorization = `Bearer `;
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         
         // Process queued requests
         processQueue(null, accessToken);

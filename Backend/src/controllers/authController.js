@@ -1,4 +1,4 @@
-const User = require('../models/User');
+ const User = require('../models/User');
 const ActivityLog = require('../models/ActivityLog');
 const { generateTokenPair, verifyRefreshToken, generatePasswordResetToken } = require('../utils/generateTokens');
 const logger = require('../config/logger');

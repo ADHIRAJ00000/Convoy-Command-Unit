@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import useSWR from 'swr';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import MapContainer from '@/components/Map/MapContainer';
 import NotificationToast, { type Toast } from '@/components/NotificationToast';
@@ -17,148 +18,28 @@ import type { Convoy } from '@/types/convoy';
 import type { OperationEvent } from '@/types/event';
 import type { RouteAlternative } from '@/types/route';
 
-// Hardcoded demo data as fallback
-const DEMO_CONVOYS: Convoy[] = [
-  {
-    id: '1',
-    name: 'ALPHA-HAWK-01',
-    origin: { lat: 34.08, lng: 74.79, name: 'Srinagar' },
-    destination: { lat: 34.16, lng: 77.58, name: 'Leh' },
-    speedKmph: 45,
-    priority: 'ALPHA',
-    vehicleCount: 25,
-    status: 'EN_ROUTE',
-    lastUpdated: new Date().toISOString(),
-    etaHours: 12,
-    assignedRoute: {
-      id: 'route-1',
-      name: 'Srinagar-Leh Highway',
-      polyline: [[74.79, 34.08], [75.46, 34.27], [75.63, 34.24], [77.58, 34.16]],
-      etaHours: 12,
-      distanceKm: 434,
-      riskScore: 45,
-      segments: [
-        {
-          id: 'seg-1-0',
-          coordinates: [[74.79, 34.08], [75.46, 34.27]],
-          terrain: 'MOUNTAIN',
-          difficulty: 'HIGH',
-          recommendedSpeedKmph: 35,
-          riskLevel: 0.6,
-          status: 'CLEAR',
-        },
-      ],
-      checkpoints: [
-        {
-          id: 'cp-1',
-          name: 'Zoji La Pass',
-          status: 'PENDING',
-          eta: new Date(Date.now() + 4 * 3600000).toISOString(),
-        },
-      ],
-    },
-  },
-  {
-    id: '2',
-    name: 'BRAVO-SUPPLY-12',
-    origin: { lat: 27.31, lng: 88.6, name: 'Gangtok' },
-    destination: { lat: 27.39, lng: 88.84, name: 'Nathu La' },
-    speedKmph: 40,
-    priority: 'BRAVO',
-    vehicleCount: 18,
-    status: 'EN_ROUTE',
-    lastUpdated: new Date().toISOString(),
-    etaHours: 3,
-    assignedRoute: {
-      id: 'route-2',
-      name: 'Gangtok-Nathu La Route',
-      polyline: [[88.6, 27.31], [88.72, 27.35], [88.84, 27.39]],
-      etaHours: 3,
-      distanceKm: 56,
-      riskScore: 52,
-      segments: [
-        {
-          id: 'seg-2-0',
-          coordinates: [[88.6, 27.31], [88.84, 27.39]],
-          terrain: 'MOUNTAIN',
-          difficulty: 'HIGH',
-          recommendedSpeedKmph: 30,
-          riskLevel: 0.7,
-          status: 'CLEAR',
-        },
-      ],
-      checkpoints: [
-        {
-          id: 'cp-2',
-          name: 'Nathu La Border',
-          status: 'PENDING',
-          eta: new Date(Date.now() + 3 * 3600000).toISOString(),
-        },
-      ],
-    },
-  },
-  {
-    id: '3',
-    name: 'CHARLIE-MED-08',
-    origin: { lat: 26.19, lng: 91.75, name: 'Tezpur' },
-    destination: { lat: 27.58, lng: 91.92, name: 'Tawang' },
-    speedKmph: 50,
-    priority: 'CHARLIE',
-    vehicleCount: 12,
-    status: 'PLANNED',
-    lastUpdated: new Date().toISOString(),
-    etaHours: 8,
-    assignedRoute: {
-      id: 'route-3',
-      name: 'Tezpur-Tawang Highway',
-      polyline: [[91.75, 26.19], [91.82, 26.89], [92.07, 27.35], [91.92, 27.58]],
-      etaHours: 8,
-      distanceKm: 350,
-      riskScore: 28,
-      segments: [
-        {
-          id: 'seg-3-0',
-          coordinates: [[91.75, 26.19], [91.92, 27.58]],
-          terrain: 'MOUNTAIN',
-          difficulty: 'MEDIUM',
-          recommendedSpeedKmph: 60,
-          riskLevel: 0.3,
-          status: 'CLEAR',
-        },
-      ],
-      checkpoints: [
-        {
-          id: 'cp-3',
-          name: 'Sela Pass',
-          status: 'PENDING',
-          eta: new Date(Date.now() + 6 * 3600000).toISOString(),
-        },
-      ],
-    },
-  },
-];
-
-const fetchConvoys = async () => {
-  try {
-    return await api.getConvoys();
-  } catch (error) {
-    console.error('Failed to fetch convoys from API, using demo data:', error);
-    return DEMO_CONVOYS;
-  }
-};
-
-const DashboardPage = () => {
-  const { data: apiConvoys, isLoading, mutate, error } = useSWR<Convoy[]>('/api/convoys', fetchConvoys, {
+const DashboardPageContent = () => {
+  const { data: apiConvoys, isLoading, mutate, error } = useSWR<Convoy[]>('/api/convoys', api.getConvoys, {
     refreshInterval: 15000,
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
   });
 
-  // Store convoys with real routes in state
-  const [convoysWithRealRoutes, setConvoysWithRealRoutes] = useState<Convoy[]>([]);
+  // Enriched, real road-following polylines fetched from Mapbox for convoys whose
+  // stored route is only a straight line. Keyed by convoy id so live backend
+  // updates (position, status) keep flowing through apiConvoys via SWR.
+  const [routeOverrides, setRouteOverrides] = useState<Record<string, Convoy['assignedRoute']>>({});
 
-  // Use convoys with real routes if available, otherwise use API/demo data
-  const convoys = convoysWithRealRoutes.length > 0 ? convoysWithRealRoutes : (apiConvoys || DEMO_CONVOYS);
+  const baseConvoys = apiConvoys ?? [];
+  const convoys = useMemo(
+    () =>
+      baseConvoys.map((convoy) =>
+        routeOverrides[convoy.id]
+          ? { ...convoy, assignedRoute: routeOverrides[convoy.id], etaHours: routeOverrides[convoy.id]?.etaHours ?? convoy.etaHours }
+          : convoy,
+      ),
+    [baseConvoys, routeOverrides],
+  );
 
   const pathname = usePathname();
   const [selectedConvoy, setSelectedConvoy] = useState<Convoy | null>(null);
@@ -172,7 +53,6 @@ const DashboardPage = () => {
   const [highContrast, setHighContrast] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
   const [createConvoyOpen, setCreateConvoyOpen] = useState(false);
-  const [routesLoaded, setRoutesLoaded] = useState(false);
   const [focusedCheckpoint, setFocusedCheckpoint] = useState<{ lat: number; lng: number; name: string } | null>(null);
   const speedMultiplier = 1.0; // Backend simulation speed
 
@@ -187,50 +67,48 @@ const DashboardPage = () => {
     setActiveAlternativeId(null);
   }, [selectedConvoy?.id]);
 
-  // Fetch real routes for demo convoys on initial load
+  // Enrich convoys whose stored route is only a straight line with a real
+  // road-following polyline from Mapbox. Only fetches once per convoy id, so
+  // it never fights with SWR's live position/status updates on apiConvoys.
   useEffect(() => {
-    const fetchRealRoutesForDemoConvoys = async () => {
-      const sourceConvoys = apiConvoys || DEMO_CONVOYS;
+    const sourceConvoys = apiConvoys ?? [];
+    if (!sourceConvoys.length) return;
 
-      if (routesLoaded || !sourceConvoys.length) return;
+    const needsEnrichment = sourceConvoys.filter(
+      (convoy) =>
+        convoy.assignedRoute &&
+        convoy.assignedRoute.polyline.length <= 4 &&
+        !routeOverrides[convoy.id],
+    );
 
-      console.log('Fetching real routes for convoys...');
+    if (!needsEnrichment.length) return;
 
-      const updatedConvoys = await Promise.all(
-        sourceConvoys.map(async (convoy) => {
-          // Check if convoy has only straight-line route (2-4 points suggests demo data)
-          if (convoy.assignedRoute && convoy.assignedRoute.polyline.length <= 4) {
-            console.log(`Fetching route for ${convoy.name}...`);
+    let cancelled = false;
 
-            const realRoute = await fetchMapboxRoute({
-              origin: convoy.origin,
-              destination: convoy.destination,
-              profile: 'driving',
-            });
-
-            if (realRoute) {
-              console.log(`✓ Real route fetched for ${convoy.name}: ${realRoute.distanceKm}km`);
-              return {
-                ...convoy,
-                assignedRoute: realRoute,
-                etaHours: realRoute.etaHours,
-              };
-            }
-          }
-          return convoy;
-        })
+    (async () => {
+      const entries = await Promise.all(
+        needsEnrichment.map(async (convoy) => {
+          const realRoute = await fetchMapboxRoute({
+            origin: convoy.origin,
+            destination: convoy.destination,
+            profile: 'driving',
+          });
+          return realRoute ? ([convoy.id, realRoute] as const) : null;
+        }),
       );
 
-      setConvoysWithRealRoutes(updatedConvoys);
-      setRoutesLoaded(true);
-      console.log('All routes loaded successfully!');
-    };
+      if (cancelled) return;
 
-    // Only fetch routes once on initial load
-    if (!routesLoaded) {
-      fetchRealRoutesForDemoConvoys();
-    }
-  }, [apiConvoys, routesLoaded]);
+      const updates = Object.fromEntries(entries.filter(Boolean) as [string, Convoy['assignedRoute']][]);
+      if (Object.keys(updates).length) {
+        setRouteOverrides((prev) => ({ ...prev, ...updates }));
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiConvoys, routeOverrides]);
 
   useEffect(() => {
     socketService.connect();
@@ -431,10 +309,15 @@ const DashboardPage = () => {
           lastUpdated: new Date().toISOString(),
         };
 
-        setConvoysWithRealRoutes((prev) =>
-          prev.map((c) => c.id === selectedConvoy.id ? updatedConvoy : c)
-        );
+        setRouteOverrides((prev) => ({ ...prev, [selectedConvoy.id]: fastest.route }));
         setSelectedConvoy(updatedConvoy);
+
+        fetch(`/api/convoys/${selectedConvoy.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ assignedRoute: fastest.route, etaHours: fastest.route.etaHours }),
+        }).catch((e) => console.warn('Failed to persist rerouted convoy:', e));
+
         await mutate();
       }
 
@@ -482,8 +365,14 @@ const DashboardPage = () => {
       lastUpdated: new Date().toISOString(),
     };
 
-    setConvoysWithRealRoutes((prev) => prev.map((convoy) => (convoy.id === selectedConvoy.id ? updatedConvoy : convoy)));
+    setRouteOverrides((prev) => ({ ...prev, [selectedConvoy.id]: alternative.route }));
     setSelectedConvoy(updatedConvoy);
+
+    fetch(`/api/convoys/${selectedConvoy.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ assignedRoute: alternative.route, etaHours: alternative.route.etaHours }),
+    }).catch((e) => console.warn('Failed to persist applied route:', e));
 
     // Hide the alternatives overlay after applying one to let the map breathe
     setRouteAlternatives([]);
@@ -549,8 +438,8 @@ const DashboardPage = () => {
         isFallback: realRoute.id.includes('fallback')
       });
 
-      const newConvoy: Convoy = {
-        id: `convoy-${Date.now()}`, // Generate temporary ID
+      const newConvoyPayload: Convoy = {
+        id: `convoy-${Date.now()}`,
         name: formData.get('name') as string,
         priority: formData.get('priority') as Convoy['priority'],
         vehicleCount: parseInt(formData.get('vehicleCount') as string),
@@ -565,30 +454,30 @@ const DashboardPage = () => {
         lastUpdated: new Date().toISOString(),
       };
 
-      // Try to save to backend
-      try {
-        const response = await fetch('/api/convoys', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newConvoy),
-        });
+      // Persist to the real backend - if this fails, surface the error
+      // instead of pretending the convoy was saved.
+      const response = await fetch('/api/convoys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newConvoyPayload),
+      });
 
-        if (response.ok) {
-          const createdConvoy = await response.json();
-          // Update with backend-generated ID if available
-          if (createdConvoy.id) {
-            newConvoy.id = createdConvoy.id;
-          }
-        }
-      } catch (apiError) {
-        console.warn('Backend save failed, continuing with client-side convoy:', apiError);
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(errorBody.error || 'Failed to save convoy to the server.');
       }
+
+      const createdConvoy: Convoy = await response.json();
+
+      // Cache the freshly-fetched real route so it's shown instantly without
+      // waiting for the next SWR poll, and won't get re-enriched/overwritten.
+      setRouteOverrides((prev) => ({ ...prev, [createdConvoy.id]: createdConvoy.assignedRoute ?? realRoute }));
 
       // Close modal first for better UX
       setCreateConvoyOpen(false);
 
-      // Add the new convoy to both local state and force refresh
-      setConvoysWithRealRoutes((prev) => [...prev, newConvoy]);
+      // Optimistically add to the SWR cache, then revalidate against the backend
+      await mutate((current) => [...(current ?? []), createdConvoy], { revalidate: true });
 
       // Show success toast with route details
       const routeType = realRoute.id.includes('fallback') ? 'Direct route' : 'Road-based route';
@@ -599,16 +488,13 @@ const DashboardPage = () => {
         {
           id: `convoy-created-${Date.now()}`,
           title: `Convoy created with ${routeType}`,
-          description: `${newConvoy.name} - ${realRoute.distanceKm}km ${pathInfo}, ETA ${realRoute.etaHours}h, ${realRoute.checkpoints.length} checkpoints`,
+          description: `${createdConvoy.name} - ${realRoute.distanceKm}km ${pathInfo}, ETA ${realRoute.etaHours}h, ${realRoute.checkpoints.length} checkpoints`,
           tone: 'success',
         },
       ]);
 
-      // Try to refresh from backend
-      mutate().catch(e => console.warn('Mutate failed:', e));
-
       // Select the newly created convoy
-      setSelectedConvoy(newConvoy);
+      setSelectedConvoy(createdConvoy);
 
     } catch (error) {
       // Dismiss any loading toasts
@@ -753,6 +639,12 @@ const DashboardPage = () => {
         </div>
       </nav>
 
+      {error && (
+        <div className="border-b border-red-500/40 bg-red-500/10 px-6 py-2 text-sm text-red-300">
+          Unable to reach the convoy server. Check that the backend is running — showing no convoys until it recovers.
+        </div>
+      )}
+
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar */}
         <div className="hidden lg:block">
@@ -857,9 +749,11 @@ const DashboardPage = () => {
                             className="w-full rounded-lg border border-panelNight/40 bg-slateDepth px-4 py-2 text-sm text-textNeutral focus:border-amberCommand focus:outline-none"
                           >
                             <option value="ARMY">Army</option>
-                            <option value="SUPPLY">Supply</option>
+                            <option value="AIRFORCE">Air Force</option>
+                            <option value="NAVY">Navy</option>
+                            <option value="PARAMILITARY">Paramilitary</option>
+                            <option value="LOGISTICS">Logistics / Supply</option>
                             <option value="MEDICAL">Medical</option>
-                            <option value="FUEL">Fuel</option>
                           </select>
                         </div>
                         <div>
@@ -1219,5 +1113,11 @@ const DashboardPage = () => {
     </div>
   );
 };
+
+const DashboardPage = () => (
+  <ProtectedRoute>
+    <DashboardPageContent />
+  </ProtectedRoute>
+);
 
 export default DashboardPage;

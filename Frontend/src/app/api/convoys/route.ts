@@ -1,30 +1,50 @@
 import { NextResponse } from 'next/server';
-import type { Convoy } from '@/types/convoy';
-import seedConvoys from '@/data/mock/convoys.json';
+import { normalizeConvoy, denormalizeRoute } from '@/lib/convoyAdapter';
 
-const convoyStore: Convoy[] = (seedConvoys as Convoy[]).map((convoy) => ({ ...convoy }));
+const BACKEND_BASE = process.env.BACKEND_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
 
 export async function GET() {
-  return NextResponse.json(convoyStore);
+  try {
+    const response = await fetch(`${BACKEND_BASE}/api/convoys`, { cache: 'no-store' });
+    const payload = await response.json();
+
+    if (!response.ok || !payload.success) {
+      return NextResponse.json({ error: payload.error || 'Failed to fetch convoys' }, { status: response.status || 502 });
+    }
+
+    return NextResponse.json(payload.data.map(normalizeConvoy));
+  } catch (error) {
+    console.error('Failed to reach backend for convoys', error);
+    return NextResponse.json({ error: 'Backend unreachable' }, { status: 502 });
+  }
 }
 
 export async function POST(request: Request) {
-  const payload = (await request.json()) as Partial<Convoy>;
-  const newConvoy: Convoy = {
-    id: payload.id ?? `CVY-${(convoyStore.length + 1).toString().padStart(3, '0')}`,
-    name: payload.name ?? 'New Convoy',
-    origin: payload.origin ?? { lat: 0, lng: 0 },
-    destination: payload.destination ?? { lat: 0, lng: 0 },
-    speedKmph: payload.speedKmph ?? 50,
-    priority: payload.priority ?? 'BRAVO',
-    vehicleCount: payload.vehicleCount ?? 10,
-    status: payload.status ?? 'PLANNED',
-    lastUpdated: new Date().toISOString(),
-    assignedRoute: payload.assignedRoute,
-    etaHours: payload.etaHours ?? 12,
-    mergeSuggestion: payload.mergeSuggestion,
-  };
+  try {
+    const body = await request.json();
 
-  convoyStore.push(newConvoy);
-  return NextResponse.json(newConvoy, { status: 201 });
+    const backendBody = {
+      ...body,
+      currentPosition: body.currentPosition ?? body.origin,
+      unitType: body.unitType ?? 'LOGISTICS',
+      assignedRoute: body.assignedRoute ? denormalizeRoute(body.assignedRoute) : undefined,
+    };
+
+    const response = await fetch(`${BACKEND_BASE}/api/convoys`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(backendBody),
+    });
+
+    const payload = await response.json();
+
+    if (!response.ok || !payload.success) {
+      return NextResponse.json({ error: payload.error || 'Failed to create convoy' }, { status: response.status || 400 });
+    }
+
+    return NextResponse.json(normalizeConvoy(payload.data), { status: 201 });
+  } catch (error) {
+    console.error('Failed to reach backend for convoy creation', error);
+    return NextResponse.json({ error: 'Backend unreachable' }, { status: 502 });
+  }
 }

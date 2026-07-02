@@ -4,14 +4,17 @@ import clsx from 'clsx';
 const statusColor: Record<Convoy['status'], string> = {
   PLANNED: 'text-oliveAux',
   EN_ROUTE: 'text-amberCommand',
+  AT_CHECKPOINT: 'text-sky-300',
   COMPLETED: 'text-emerald-300',
   DELAYED: 'text-dangerAlert',
+  CANCELLED: 'text-textNeutral/50',
 };
 
 const priorityLabel: Record<Convoy['priority'], string> = {
   ALPHA: 'Alpha',
   BRAVO: 'Bravo',
   CHARLIE: 'Charlie',
+  DELTA: 'Delta',
 };
 
 export type ConvoyCardProps = {
