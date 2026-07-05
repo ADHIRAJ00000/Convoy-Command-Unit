@@ -1,14 +1,8 @@
 {
   "buildCommand": "npm install && next build",
   "devCommand": "npm run dev",
-  "startCommand": "npm start",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "env": {
-    "NEXT_PUBLIC_MAPBOX_TOKEN": "@mapbox-token",
-    "NEXT_PUBLIC_OPENWEATHER_API_KEY": "@openweather-api-key",
-    "NEXT_PUBLIC_API_URL": "@backend-api-url"
-  },
   "headers": [
     {
       "source": "/(.*)",
@@ -27,14 +21,5 @@
         }
       ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://hawkroute-backend.onrender.com/api/:path*"
-    }
-  ],
-  "regions": [
-    "iad1"
   ]
 }
