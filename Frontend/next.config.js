@@ -4,7 +4,6 @@ const nextConfig = {
     // Keep Mapbox bundles lean during dev while allowing tree-shaking.
     optimizePackageImports: ['mapbox-gl'],
   },
-  outputFileTracingRoot: __dirname,
   images: {
     remotePatterns: [
       {
