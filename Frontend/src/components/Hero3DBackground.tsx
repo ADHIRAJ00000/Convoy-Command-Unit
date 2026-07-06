@@ -102,12 +102,14 @@ function AnimatedGlobe() {
                 <bufferGeometry>
                     <bufferAttribute
                         attach="attributes-position"
+                        args={[positions, 3]}
                         count={particleCount}
                         array={positions}
                         itemSize={3}
                     />
                     <bufferAttribute
                         attach="attributes-color"
+                        args={[colors, 3]}
                         count={particleCount}
                         array={colors}
                         itemSize={3}

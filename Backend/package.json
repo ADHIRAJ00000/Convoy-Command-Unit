@@ -20,6 +20,9 @@
   "author": "Hawkroute Team",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
